@@ -25,9 +25,9 @@ import Legande from './components/Legande.vue';
     </nav>
   </header>
   
-  <Legande></Legande>
   <main>
     <RouterView />
+    <Legande></Legande>
   </main>
 </template>
 
