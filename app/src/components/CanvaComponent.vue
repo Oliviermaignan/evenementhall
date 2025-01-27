@@ -37,9 +37,20 @@ const onMouseDown = (event: MouseEvent) => {
 const onMouseMove = (event: MouseEvent) => {
   if (selectedShape.value && selectedShape.value.isDragging) {
     const { offsetX: mouseX, offsetY: mouseY } = event;
-    selectedShape.value.x = mouseX - offsetX.value;
-    selectedShape.value.y = mouseY - offsetY.value;
-    drawShapes(); // Redessiner après déplacement
+
+    // Calcule la nouvelle position
+    let newX = mouseX - offsetX.value;
+    let newY = mouseY - offsetY.value;
+
+    // contraint avec la taille du canva
+    newX = Math.max(0, Math.min(canvasWidth - selectedShape.value.width, newX));
+    newY = Math.max(0, Math.min(canvasHeight - selectedShape.value.height, newY));
+
+    // update
+    selectedShape.value.x = newX;
+    selectedShape.value.y = newY;
+
+    drawShapes();
   }
 };
 
