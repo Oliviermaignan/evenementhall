@@ -12,8 +12,10 @@ const offsetY = ref(0);
 const canvasWidth = 800;
 const canvasHeight = 600;
 
-const addShape = (x: number, y: number, width: number, height: number, color: string) => {
-  const shape = new Shape(x, y, width, height, color);
+const addShape = (canvas: HTMLCanvasElement, x: number, y: number, width: number, height: number, color: string, angle: number) => {
+  console.log(color);
+  
+  const shape = new Shape(canvas, x, y, width, height, color, angle);
   shapes.value.push(shape);
   drawShapes()
 };
@@ -22,12 +24,13 @@ const addShape = (x: number, y: number, width: number, height: number, color: st
 const onMouseDown = (event: MouseEvent) => {
   const { offsetX: mouseX, offsetY: mouseY } = event;
   selectedShape.value = shapes.value.find((shape) =>
-    shape.isInside(mouseX, mouseY)
+    shape.isInside(mouseX, mouseY),
   ) || null;
-
+  
   if (selectedShape.value) {
+    console.log('Shape selected:', selectedShape.value);
     selectedShape.value.isDragging = true;
-    selectedShape.value.rotate = true;
+    selectedShape.value.selected = true;
 
     offsetX.value = mouseX - selectedShape.value.x;
     offsetY.value = mouseY - selectedShape.value.y;
@@ -57,15 +60,38 @@ const onMouseMove = (event: MouseEvent) => {
 const onMouseUp = () => {
   if (selectedShape.value) {
     selectedShape.value.isDragging = false;
-    selectedShape.value = null;
+    // selectedShape.value = null;
   }
 };
 
 const drawShapes = () => {
-  if (context.value) {
-    context.value.clearRect(0, 0, canvasWidth, canvasHeight); // Efface le canevas
-    shapes.value.forEach((shape) => shape.draw(context.value!)); // Redessine chaque forme
-  }
+  if (!context.value) return 
+    // efface
+  context.value.clearRect(0, 0, canvasWidth, canvasHeight); 
+    
+  shapes.value.forEach((shape) => {
+    shape.drawHitBox(context.value)
+    shape.draw(context.value)}
+  
+  );
+  
+};
+
+const rotate = (angle) => {
+  if (!context.value) return 
+
+  if (selectedShape.value?.selected) {
+    console.log('oui la rotation');
+    
+    context.value.clearRect(0, 0, canvasWidth, canvasHeight); 
+    selectedShape.value.angle += angle
+    shapes.value.forEach((shape) => {
+      shape.drawHitBox(context.value)
+      shape.draw(context.value)
+    });
+    selectedShape.value.selected = false;
+    selectedShape.value = null;
+  }  
 };
 
 
@@ -88,9 +114,9 @@ onMounted(()=>{
         </canvas>
     </div>
     <div>
-        <button id="chaise-btn" @click="addShape(0,0,50,50,'green')">ajouter chaise</button>
-        <button id="table-btn" @click="addShape(0,0,100,150,'red')">ajouter table</button>
-        <button id="rotate-btn" @click="rotate()">Rotation 90°</button>
+        <button id="chaise-btn" @click="addShape(canvas, 0,0,50,50,'green', 0)">ajouter chaise</button>
+        <button id="table-btn" @click="addShape(canvas, 0,0,100,150,'red', 0)">ajouter table</button>
+        <button id="rotate-btn" @click="rotate(90)">Rotation 90°</button>
     </div>
 
 </template>
