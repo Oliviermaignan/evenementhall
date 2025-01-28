@@ -32,31 +32,35 @@ export default class Shape {
       mouseY <= this.y + this.sideLength
     );
   }
-  // isInside(canvas: HTMLCanvasElement, mouseX: number, mouseY: number): boolean {
-    
-  //   const sideLength = Math.max(this.width, this.height);
-    
-  //   const squareX = this.x - (sideLength - this.width) / 2;
-  //   const squareY = this.y - (sideLength - this.height) / 2;
-    
-  //   this.drawHitBox(squareX, squareY, canvas);
-  //   return (
-  //     mouseX >= squareX &&
-  //     mouseX <= squareX + sideLength &&
-  //     mouseY >= squareY &&
-  //     mouseY <= squareY + sideLength
-  //   );
-  // }
 
   drawHitBox(context: CanvasRenderingContext2D) {
-    console.log(this.sideLength);
-    
-    if (context){
+    if (context) {
+      // Calculer la taille du carré (le plus petit côté du rectangle)
+      const sideLength = Math.min(this.width, this.height);
+      
+      // Calculer les coordonnées pour centrer le carré dans le rectangle
+      const squareX = this.x + (this.width - sideLength) / 2;
+      const squareY = this.y + (this.height - sideLength) / 2;
+      
+      // Dessiner la hitbox (carré)
       context.save();
       context.strokeStyle = 'yellow';
-      context.lineWidth = 2;
-      context.strokeRect(this.x,this.y, this.sideLength, this.sideLength);
+      context.lineWidth = 1;
+      context.strokeRect(squareX, squareY, sideLength, sideLength);
       context.restore();
+     
+      // Charger et dessiner l'icône
+      const icon = new Image();
+      icon.src = '/icons/drag_pan.svg';
+  
+      // Dessiner l'icône une fois qu'elle est chargée
+      icon.onload = () => {
+        // Calculer la taille et la position de l'icône pour qu'elle soit centrée dans le carré
+        const iconSize = sideLength / 2;
+        const iconX = squareX + (sideLength - iconSize) / 2;
+        const iconY = squareY + (sideLength - iconSize) / 2;
+        context.drawImage(icon, iconX, iconY, iconSize, iconSize);
+      };
     }
   }
 
@@ -64,8 +68,8 @@ export default class Shape {
     const angleIncrementInDegrees = angle;
     const angleIncrementInRadians = (angleIncrementInDegrees * Math.PI) / 180;
     this.angle += angleIncrementInRadians; // Add in radians
-    this.drawHitBox(this.canvas.getContext("2d")!);
     this.draw(this.canvas.getContext("2d")!);
+    this.drawHitBox(this.canvas.getContext("2d")!);
   }
 
 
