@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { CanevasIconName } from './enums.ts';
+
 import Shape from './ShapeClass'; 
+
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 const context = ref<CanvasRenderingContext2D | null>(null);
@@ -12,10 +15,8 @@ const offsetY = ref(0);
 const canvasWidth = 800;
 const canvasHeight = 600;
 
-const addShape = (canvas: HTMLCanvasElement, x: number, y: number, width: number, height: number, color: string, angle: number) => {
-  console.log(color);
-  
-  const shape = new Shape(canvas, x, y, width, height, color, angle);
+const addShape = (canvas: HTMLCanvasElement, x: number, y: number, width: number, height: number, color: string, angle: number, icon: CanevasIconName) => {
+  const shape = new Shape(canvas, x, y, width, height, color, angle, icon);
   shapes.value.push(shape);
   drawShapes()
 };
@@ -70,8 +71,9 @@ const drawShapes = () => {
   context.value.clearRect(0, 0, canvasWidth, canvasHeight); 
     
   shapes.value.forEach((shape) => {
+    shape.draw(context.value, 'star')
     shape.drawHitBox(context.value)
-    shape.draw(context.value)}
+  }
   
   );
   
@@ -115,7 +117,7 @@ onMounted(()=>{
     </div>
     <div>
         <button id="chaise-btn" @click="addShape(canvas, 0,0,50,50,'green', 0)">ajouter chaise</button>
-        <button id="table-btn" @click="addShape(canvas, 0,0,100,150,'red', 0)">ajouter table</button>
+        <button id="table-btn" @click="addShape(canvas, 0,0,200,200,'red', 0, CanevasIconName.Rectangle)">ajouter table</button>
         <button id="rotate-btn" @click="rotate(90)">Rotation 90°</button>
     </div>
 

@@ -1,3 +1,5 @@
+import { CanevasIconName } from './enums';
+
 export default class Shape {
   canvas: HTMLCanvasElement;
   x: number;
@@ -9,8 +11,9 @@ export default class Shape {
   angle: number;
   selected: boolean;
   sideLength: number;
+  icon: CanevasIconName;
 
-  constructor(canvas: HTMLCanvasElement, x: number, y: number, width: number, height: number, color: string, angle: number) {
+  constructor(canvas: HTMLCanvasElement, x: number, y: number, width: number, height: number, color: string, angle: number, icon: CanevasIconName) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -21,6 +24,7 @@ export default class Shape {
     this.canvas = canvas;
     this.selected = false;
     this.sideLength = Math.max(this.width, this.height);
+    this.icon = icon;
   }
 
   // prendre en compte la rotation
@@ -82,9 +86,18 @@ export default class Shape {
     // prise en compte de l'angle
     context.rotate(this.angle * Math.PI / 180);
 
-    context.fillStyle = this.color;
-    context.fillRect(-this.width/2, -this.height/2, this.width, this.height);
+    // context.fillStyle = this.color;
+    // context.fillRect(-this.width/2, -this.height/2, this.width, this.height);
     
+    if (this.icon){
+      const icon = new Image();
+      icon.src = '/icons/' + this.icon;
+      icon.onload = () => {
+        context.drawImage(icon , this.x, this.y, this.width, this.height);
+    }
+    };
+
+
     context.restore()
   }
 
