@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { CanevasIconName } from './enums.ts';
-import { CanevasStorage } from '../providers/CanvasStorage.ts'
+import { LocalCanvasStorage } from '../adapters_out/storage.ts'
 import Shape from './ShapeClass'; 
 import CanvasManager from '../canvasManager.ts';
-
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 const context = ref<CanvasRenderingContext2D | null>(null);
@@ -14,7 +13,8 @@ const offsetX = ref(0);
 const offsetY = ref(0);
 const canvasWidth = 800;
 const canvasHeight = 600;
-const canvasManager = new CanvasManager()
+const localCanvasStorage = new LocalCanvasStorage()
+const canvasManager = new CanvasManager(localCanvasStorage)
 
 const addShape = (canvas: HTMLCanvasElement, x: number, y: number, angle: number, icon: CanevasIconName) => {
   const shape = new Shape(canvas, x, y, angle, icon);
@@ -60,6 +60,7 @@ const onMouseMove = (event: MouseEvent) => {
     selectedShape.value.x = newX;
     selectedShape.value.y = newY;
 
+    canvasManager.updateShapePosition(selectedShape.value.id ,newX, newY)
     drawShapes();
   }
 };

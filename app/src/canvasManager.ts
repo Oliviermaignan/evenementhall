@@ -1,12 +1,12 @@
-import { CanvasStorage } from "./providers/CanvasStorage";
+import { LocalCanvasStorage } from "../src/adapters_out/storage";
 import Shape from "./components/ShapeClass";
 
 export default class CanvasManager {
-  private canvasStorage: CanvasStorage;
+  private localCanvasStorage: LocalCanvasStorage;
   private shapes: Shape[];
 
-  constructor() {
-    this.canvasStorage = new CanvasStorage();
+  constructor(canvasStorage: CanvasStorage) {
+    this.canvasStorage = canvasStorage;
     this.shapes = [];
   }
 
@@ -34,7 +34,6 @@ export default class CanvasManager {
   updateShapePosition(id: number, newX: number, newY: number): void {
     const shape = this.shapes.find(s => s.id === id);
     if (shape) {
-      shape.updatePosition(newX, newY);
       this.saveShapes();
     }
   }
