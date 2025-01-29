@@ -1,28 +1,35 @@
 import { CanvasStorage } from "./providers/CanvasStorage";
-import { Shape } from "components/ShapeClass";
-import { drawShapes } from "./canvas_renderer";
+import Shape from "./components/ShapeClass";
 
-const canvasStorage = new LocalCanvasStorage();
-let shapes: Shape[] = [];
+class CanvasManager {
+  private canvasStorage: CanvasStorage;
+  private shapes: Shape[];
 
-export function saveShapes() {
-  canvasStorage.save(JSON.stringify(shapes));
-}
+  constructor() {
+    this.canvasStorage = new CanvasStorage();
+    this.shapes = [];
+  }
 
-export function loadShapes() {
-  const data = canvasStorage.load();
-  if (data) {
-    shapes = JSON.parse(data);
-    drawShapes(shapes);
+  saveShapes(): void {
+    this.canvasStorage.save(JSON.stringify(this.shapes));
+  }
+
+  loadShapes(): void {
+    const data = this.canvasStorage.load();
+    if (data) {
+      this.shapes = JSON.parse(data);
+      this.drawShapes();
+    }
+  }
+
+  getShapes(): Shape[] {
+    return this.shapes;
+  }
+
+  addShape(shape: Shape): void {
+    this.shapes.push(shape);
+    console.log(this.shapes);
   }
 }
 
-export function addShape(shape: Shape) {
-  shapes.push(shape);
-  drawShapes(shapes);
-  saveShapes();
-}
-
-export function getShapes(): Shape[] {
-  return shapes;
-}
+export default CanvasManager;
