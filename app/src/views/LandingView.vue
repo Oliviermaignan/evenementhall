@@ -4,10 +4,14 @@ import CanvaComponent from '../components/CanvaComponent.vue';
 </script>
 
 <template>
-<p>hello from landing view</p>
-<CanvaComponent/>
+    <div class="canva-container">
+        <CanvaComponent/>
+    </div>
 </template>
 
 <style scoped>
-
+.canva-container{
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
 </style>
