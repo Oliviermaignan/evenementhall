@@ -1,27 +1,50 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { CanevasIconName } from './enums.ts';
+import Shape from './ShapeClass'; // Assurez-vous que cette classe existe et gère correctement les formes.
+import Legande from './Legande.vue';
+import { LocalStorageProvider } from '../providers/LocalStorageProvider';
+import type { DataProvider } from '../providers/DataProvider';
+import type { Plan } from '../interface';
 
-import Shape from './ShapeClass'; 
-
-
+// Références pour canvas et context
 const canvas = ref<HTMLCanvasElement | null>(null);
 const context = ref<CanvasRenderingContext2D | null>(null);
+
+// Variables pour gérer les formes
 const shapes = ref<Shape[]>([]);
 const selectedShape = ref<Shape | null>(null);
+
+// Variables pour le drag-and-drop
 const offsetX = ref(0);
 const offsetY = ref(0);
 
+// Dimensions du canvas
 const canvasWidth = 800;
 const canvasHeight = 600;
 
+// Variables réactives pour les plans
+const planName = ref('');
+const message = ref('');
+
+// Méthode pour créer un plan
+const createPlan = () => {
+  if (planName.value.trim() === '') {
+    alert('Veuillez entrer un nom pour le plan.');
+    return;
+  }
+  message.value = `Le plan "${planName.value}" a été créé avec succès !`;
+  planName.value = ''; // Réinitialise le champ de texte
+};
+
+// Ajouter une forme
 const addShape = (canvas: HTMLCanvasElement, x: number, y: number, angle: number, icon: CanevasIconName) => {
   const shape = new Shape(canvas, x, y, angle, icon);
   shapes.value.push(shape);
-  drawShapes()
+  drawShapes();
 };
 
-// Gestion des événements de la souris
+// Gestion des événements de souris pour drag-and-drop
 const onMouseDown = (event: MouseEvent) => {
   const { offsetX: mouseX, offsetY: mouseY } = event;
   selectedShape.value = shapes.value.find((shape) =>
@@ -97,15 +120,19 @@ const rotate = (angle) => {
     });
     selectedShape.value.selected = false;
     selectedShape.value = null;
-  }  
+  }
 };
 
+// Fonction pour créer un nouvel état
+const onCreate = () => {
+  console.log('Création en cours...');
+  // Logique pour initialiser un nouvel état ou ajouter des éléments
+};
 
 onMounted(()=>{
     if (canvas.value) {
         context.value = canvas.value.getContext('2d');
         console.log(shapes);
-        
   } else {
     return
   }
@@ -128,10 +155,55 @@ onMounted(()=>{
     <button id="rotate-btn" @click="rotate(90)">Rotation 90°</button>
   </div>
 
+  <div>
+    <!-- Boutons pour ajouter des formes -->
+    <button id="chaise-btn" @click="addShape(0, 0, 50, 50, 'green')">Ajouter une chaise</button>
+    <button id="table-btn" @click="addShape(0, 0, 100, 150, 'red')">Ajouter une table</button>
+    <button id="rotate-btn" @click="rotate">Rotation 90°</button>
+  </div>
+
+  <Legande />
+  <div>
+    <!-- Boutons supplémentaires -->
+    <button @click="onSave">Enregistrer</button>
+    <button @click="onCreate">Créer</button>
+  </div>
+
+  
 </template>
 
 <style scoped>
 canvas {
   border: 1px solid black
+}
+
+button {
+  margin: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #8188ad;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+form {
+  width: 15rem;
+  display: flex;
+  background-color: #D9D9D9;
+  border: 1px solid black;
+  border-radius: 15px;
+  padding: 5px;
+  align-items: center;
+}
+
+textarea {
+  border: none;
+  background-color: #D9D9D9;
+  resize: none; /* Désactiver le redimensionnement */
 }
 </style>
