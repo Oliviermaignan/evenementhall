@@ -2,6 +2,9 @@
 import { onMounted, ref } from 'vue';
 import Shape from './ShapeClass'; // Assurez-vous que cette classe existe et gère correctement les formes.
 import Legande from './Legande.vue';
+import { LocalStorageProvider } from '../providers/LocalStorageProvider';
+import type { DataProvider } from '../providers/DataProvider';
+import type { Plan } from '../interface';
 
 // Références pour canvas et context
 const canvas = ref<HTMLCanvasElement | null>(null);
@@ -103,9 +106,25 @@ onMounted(() => {
   }
 });
 
+const isOnline = false
 // Fonction pour sauvegarder l'état
 const onSave = () => {
   console.log('Sauvegarde en cours...');
+  let provider: DataProvider | null = null
+
+  if (!isOnline) provider = new LocalStorageProvider()
+  if (!provider) return
+
+  // Je met le nom de mon input et la liste de forme à enregistrer
+  const planData: Plan = {
+    name: 'test',
+    planData : [
+      new Shape(10, 10, 100, 100, 'FEFEFEFE')
+    ]
+  }
+
+  // Ici, peu importe le provider, j' enregistre ou je get de la même façon
+  provider.save(planData)
   // Ajoutez ici la logique pour enregistrer les données du canvas ou des formes
 };
 
