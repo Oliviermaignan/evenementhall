@@ -1,6 +1,8 @@
 import { CanevasIconName } from "./enums";
 
 export default class Shape {
+  private static idCounter = 0; // Static counter shared across all instances
+  public id: number;
   canvas: HTMLCanvasElement;
   x: number;
   y: number;
@@ -20,6 +22,7 @@ export default class Shape {
     angle: number,
     icon: CanevasIconName
   ) {
+    this.id = Shape.idCounter++; 
     this.x = x;
     this.y = y;
     this.isDragging = false;
