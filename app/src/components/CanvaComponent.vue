@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue';
 import { CanevasIconName } from './enums.ts';
 import { CanevasStorage } from '../providers/CanvasStorage.ts'
 import Shape from './ShapeClass'; 
+import CanvasManager from '../canvasManager.ts';
 
 
 const canvas = ref<HTMLCanvasElement | null>(null);
@@ -11,13 +12,14 @@ const shapes = ref<Shape[]>([]);
 const selectedShape = ref<Shape | null>(null);
 const offsetX = ref(0);
 const offsetY = ref(0);
-
 const canvasWidth = 800;
 const canvasHeight = 600;
+const canvasManager = new CanvasManager()
 
 const addShape = (canvas: HTMLCanvasElement, x: number, y: number, angle: number, icon: CanevasIconName) => {
   const shape = new Shape(canvas, x, y, angle, icon);
   shapes.value.push(shape);
+  canvasManager.addShape(shape)
   drawShapes()
 };
 

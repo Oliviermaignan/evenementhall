@@ -1,7 +1,7 @@
 import { CanvasStorage } from "./providers/CanvasStorage";
 import Shape from "./components/ShapeClass";
 
-class CanvasManager {
+export default class CanvasManager {
   private canvasStorage: CanvasStorage;
   private shapes: Shape[];
 
@@ -30,6 +30,13 @@ class CanvasManager {
     this.shapes.push(shape);
     console.log(this.shapes);
   }
-}
 
-export default CanvasManager;
+  updateShapePosition(id: number, newX: number, newY: number): void {
+    const shape = this.shapes.find(s => s.id === id);
+    if (shape) {
+      shape.updatePosition(newX, newY);
+      this.saveShapes();
+    }
+  }
+
+}
