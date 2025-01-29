@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { CanevasIconName } from './enums.ts';
-
+import { CanevasStorage } from '../providers/CanvasStorage.ts'
 import Shape from './ShapeClass'; 
 
 
