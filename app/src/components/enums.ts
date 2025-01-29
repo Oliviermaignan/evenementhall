@@ -1,4 +1,6 @@
 export enum CanevasIconName {
-    Rectangle = "Rectangle.svg",
-    Star = "STAR",
-  }
+    Table = "Rectangle.svg",
+    Déco = "Star.svg",
+    Chaise = "Ellipse.svg",
+    PorteManteau = "Polygon.svg",
+}

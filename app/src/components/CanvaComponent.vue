@@ -15,8 +15,8 @@ const offsetY = ref(0);
 const canvasWidth = 800;
 const canvasHeight = 600;
 
-const addShape = (canvas: HTMLCanvasElement, x: number, y: number, width: number, height: number, color: string, angle: number, icon: CanevasIconName) => {
-  const shape = new Shape(canvas, x, y, width, height, color, angle, icon);
+const addShape = (canvas: HTMLCanvasElement, x: number, y: number, angle: number, icon: CanevasIconName) => {
+  const shape = new Shape(canvas, x, y, angle, icon);
   shapes.value.push(shape);
   drawShapes()
 };
@@ -25,8 +25,9 @@ const addShape = (canvas: HTMLCanvasElement, x: number, y: number, width: number
 const onMouseDown = (event: MouseEvent) => {
   const { offsetX: mouseX, offsetY: mouseY } = event;
   selectedShape.value = shapes.value.find((shape) =>
-    shape.isInside(mouseX, mouseY),
-  ) || null;
+  shape.isInside(mouseX, mouseY),
+) || null;
+
   
   if (selectedShape.value) {
     console.log('Shape selected:', selectedShape.value);
@@ -35,6 +36,9 @@ const onMouseDown = (event: MouseEvent) => {
 
     offsetX.value = mouseX - selectedShape.value.x;
     offsetY.value = mouseY - selectedShape.value.y;
+  } else {
+    console.log('no shape selected');
+    
   }
 };
 
@@ -47,8 +51,8 @@ const onMouseMove = (event: MouseEvent) => {
     let newY = mouseY - offsetY.value;
 
     // contraint avec la taille du canva
-    newX = Math.max(0, Math.min(canvasWidth - selectedShape.value.width, newX));
-    newY = Math.max(0, Math.min(canvasHeight - selectedShape.value.height, newY));
+    newX = Math.max(0, Math.min(canvasWidth - selectedShape.value.image?.naturalWidth, newX));
+    newY = Math.max(0, Math.min(canvasHeight - selectedShape.value.image?.naturalHeight, newY));
 
     // update
     selectedShape.value.x = newX;
@@ -71,7 +75,7 @@ const drawShapes = () => {
   context.value.clearRect(0, 0, canvasWidth, canvasHeight); 
     
   shapes.value.forEach((shape) => {
-    shape.draw(context.value, 'star')
+    shape.draw(context.value)
     shape.drawHitBox(context.value)
   }
   
@@ -109,22 +113,25 @@ onMounted(()=>{
 </script>
 
 <template>
-    <div>
-        <p>this is my rectangle</p>
-        <canvas ref="canvas" :width="canvasWidth" :height="canvasHeight" @mousedown="onMouseDown"
-            @mousemove="onMouseMove" @mouseup="onMouseUp">
-        </canvas>
-    </div>
-    <div>
-        <button id="chaise-btn" @click="addShape(canvas, 0,0,50,50,'green', 0)">ajouter chaise</button>
-        <button id="table-btn" @click="addShape(canvas, 0,0,200,200,'red', 0, CanevasIconName.Rectangle)">ajouter table</button>
-        <button id="rotate-btn" @click="rotate(90)">Rotation 90°</button>
-    </div>
+  <div>
+    <p>this is my rectangle</p>
+    <canvas ref="canvas" :width="canvasWidth" :height="canvasHeight" @mousedown="onMouseDown" @mousemove="onMouseMove"
+      @mouseup="onMouseUp">
+    </canvas>
+  </div>
+  <div>
+    <button id="chaise-btn" @click="addShape(canvas, 0,0,0,CanevasIconName.Chaise)">ajouter chaise</button>
+    <button id="table-btn" @click="addShape(canvas, 0,0, 0, CanevasIconName.Table)">ajouter
+      table</button>
+    <button id="deco-btn" @click="addShape(canvas, 0,0, 0, CanevasIconName.Déco)">ajouter décoration</button>
+    <button id="deco-btn" @click="addShape(canvas, 0,0, 0, CanevasIconName.PorteManteau)">ajouter porte manteau</button>
+    <button id="rotate-btn" @click="rotate(90)">Rotation 90°</button>
+  </div>
 
 </template>
 
 <style scoped>
-canvas{
-    border:1px solid black
+canvas {
+  border: 1px solid black
 }
 </style>
