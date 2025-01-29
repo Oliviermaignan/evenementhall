@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue';
 import CanvaComponent from './components/CanvaComponent.vue';
+import Button from './components/Button.vue'
 // Importation des dépendances nécessaires
 import { RouterView } from 'vue-router';
 import Legande from './components/Legande.vue';
+import buttonCompoment from './components/buttonCompoment.vue';
+
+function onSave() {
+  console.log('save')
+}
+function onCreate() {}
 </script>
 
 <template>
@@ -24,10 +31,11 @@ import Legande from './components/Legande.vue';
       </div>
     </nav>
   </header>
-  
+  <buttonCompoment></buttonCompoment>
   <main>
     <RouterView />
-    <Legande></Legande>
+
+
   </main>
 </template>
 
