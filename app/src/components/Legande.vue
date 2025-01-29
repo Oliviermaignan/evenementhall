@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import { CanevasIconName } from './enums.ts';
+
+</script>
+
 <template>
     <body>
         <div class="container">
@@ -5,19 +10,19 @@
            
               
                     <tr>
-                        <td><font-awesome-icon :icon="['fas', 'caret-up']" /></td>
+                        <td><img :src="`/icons/${CanevasIconName.PorteManteau}`" alt=""></td>
                         <td>porte manteau</td>
                     </tr>
                     <tr>
-                        <td><font-awesome-icon :icon="['fas', 'circle']" /></td>
+                        <td><img :src="`/icons/${CanevasIconName.Chaise}`" alt=""></td>
                         <td>chaise</td>
                     </tr>
                     <tr>
-                        <td><font-awesome-icon :icon="['fas', 'rectangle-ad']" /></td>
+                        <td><img :src="`/icons/${CanevasIconName.Table}`" alt=""></td>
                         <td>table</td>
                     </tr>
                     <tr>
-                        <td><font-awesome-icon :icon="['fas', 'star']" /></td>
+                        <td><img :src="`/icons/${CanevasIconName.Déco}`" alt=""></td>
                         <td>decoration</td>
                     </tr>
              
