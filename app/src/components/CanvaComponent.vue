@@ -114,7 +114,6 @@ onMounted(()=>{
 
 <template>
   <div>
-    <p>this is my rectangle</p>
     <canvas ref="canvas" :width="canvasWidth" :height="canvasHeight" @mousedown="onMouseDown" @mousemove="onMouseMove"
       @mouseup="onMouseUp">
     </canvas>
