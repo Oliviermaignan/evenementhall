@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { CanevasIconName } from './enums.ts';
 import Shape from './ShapeClass'; // Assurez-vous que cette classe existe et gère correctement les formes.
 import Legande from './Legande.vue';
 import { LocalStorageProvider } from '../providers/LocalStorageProvider';
@@ -37,95 +38,89 @@ const createPlan = () => {
 };
 
 // Ajouter une forme
-const addShape = (x: number, y: number, width: number, height: number, color: string) => {
-  const shape = new Shape(x, y, width, height, color);
+const addShape = (canvas: HTMLCanvasElement, x: number, y: number, angle: number, icon: CanevasIconName) => {
+  const shape = new Shape(canvas, x, y, angle, icon);
   shapes.value.push(shape);
   drawShapes();
 };
 
-// Dessiner les formes
-const drawShapes = () => {
-  if (context.value) {
-    context.value.clearRect(0, 0, canvasWidth, canvasHeight); // Efface le canvas
-    shapes.value.forEach((shape) => shape.draw(context.value!)); // Dessine chaque forme
-  }
-};
-
 // Gestion des événements de souris pour drag-and-drop
 const onMouseDown = (event: MouseEvent) => {
-  if (!canvas.value) return;
+  const { offsetX: mouseX, offsetY: mouseY } = event;
+  selectedShape.value = shapes.value.find((shape) =>
+  shape.isInside(mouseX, mouseY),
+) || null;
 
-  const rect = canvas.value.getBoundingClientRect();
-  const mouseX = event.clientX - rect.left;
-  const mouseY = event.clientY - rect.top;
-
-  selectedShape.value = shapes.value.find((shape) => shape.isInside(mouseX, mouseY)) || null;
-
+  
   if (selectedShape.value) {
+    console.log('Shape selected:', selectedShape.value);
     selectedShape.value.isDragging = true;
+    selectedShape.value.selected = true;
+
     offsetX.value = mouseX - selectedShape.value.x;
     offsetY.value = mouseY - selectedShape.value.y;
+  } else {
+    console.log('no shape selected');
+    
   }
 };
 
 const onMouseMove = (event: MouseEvent) => {
-  if (!canvas.value || !selectedShape.value || !selectedShape.value.isDragging) return;
+  if (selectedShape.value && selectedShape.value.isDragging) {
+    const { offsetX: mouseX, offsetY: mouseY } = event;
 
-  const rect = canvas.value.getBoundingClientRect();
-  const mouseX = event.clientX - rect.left;
-  const mouseY = event.clientY - rect.top;
+    // Calcule la nouvelle position
+    let newX = mouseX - offsetX.value;
+    let newY = mouseY - offsetY.value;
 
-  let newX = mouseX - offsetX.value;
-  let newY = mouseY - offsetY.value;
+    // contraint avec la taille du canva
+    newX = Math.max(0, Math.min(canvasWidth - selectedShape.value.image?.naturalWidth, newX));
+    newY = Math.max(0, Math.min(canvasHeight - selectedShape.value.image?.naturalHeight, newY));
 
-  // Limite la position à l'intérieur du canvas
-  newX = Math.max(0, Math.min(canvasWidth - selectedShape.value.width, newX));
-  newY = Math.max(0, Math.min(canvasHeight - selectedShape.value.height, newY));
+    // update
+    selectedShape.value.x = newX;
+    selectedShape.value.y = newY;
 
-  selectedShape.value.x = newX;
-  selectedShape.value.y = newY;
-  drawShapes();
+    drawShapes();
+  }
 };
 
 const onMouseUp = () => {
   if (selectedShape.value) {
     selectedShape.value.isDragging = false;
-    selectedShape.value = null;
+    // selectedShape.value = null;
   }
 };
 
-// Initialisation du canvas au montage
-onMounted(() => {
-  if (canvas.value) {
-    context.value = canvas.value.getContext('2d');
-    if (!context.value) {
-      console.error("Impossible d'obtenir le contexte 2D du canvas.");
-    }
-  } else {
-    console.error("Canvas non trouvé !");
+const drawShapes = () => {
+  if (!context.value) return 
+    // efface
+  context.value.clearRect(0, 0, canvasWidth, canvasHeight); 
+    
+  shapes.value.forEach((shape) => {
+    shape.draw(context.value)
+    shape.drawHitBox(context.value)
   }
-});
+  
+  );
+  
+};
 
-const isOnline = false
-// Fonction pour sauvegarder l'état
-const onSave = () => {
-  console.log('Sauvegarde en cours...');
-  let provider: DataProvider | null = null
+const rotate = (angle) => {
+  if (!context.value) return 
 
-  if (!isOnline) provider = new LocalStorageProvider()
-  if (!provider) return
-
-  // Je met le nom de mon input et la liste de forme à enregistrer
-  const planData: Plan = {
-    name: 'test',
-    planData : [
-      new Shape(10, 10, 100, 100, 'FEFEFEFE')
-    ]
-  }
-
-  // Ici, peu importe le provider, j' enregistre ou je get de la même façon
-  provider.save(planData)
-  // Ajoutez ici la logique pour enregistrer les données du canvas ou des formes
+  if (selectedShape.value?.selected) {
+    console.log('oui la rotation');
+    
+    context.value.clearRect(0, 0, canvasWidth, canvasHeight); 
+    selectedShape.value.angle += angle
+    shapes.value.forEach((shape) => {
+      shape.drawHitBox(context.value)
+      shape.draw(context.value)
+    });
+    selectedShape.value.selected = false;
+    selectedShape.value = null;
+  }  
 };
 
 // Fonction pour créer un nouvel état
@@ -133,29 +128,22 @@ const onCreate = () => {
   console.log('Création en cours...');
   // Logique pour initialiser un nouvel état ou ajouter des éléments
 };
-
-// Fonction de rotation de 90 degrés
-const rotate = () => {
-  if (selectedShape.value) {
-    selectedShape.value.rotation = (selectedShape.value.rotation || 0) + 90;
-    drawShapes();
-  } else {
-    console.log("Aucune forme sélectionnée pour la rotation.");
-  }
-};
 </script>
 
 <template>
   <div>
-    <p>Voici un rectangle à manipuler :</p>
-    <canvas
-      ref="canvas"
-      :width="canvasWidth"
-      :height="canvasHeight"
-      @mousedown="onMouseDown"
-      @mousemove="onMouseMove"
-      @mouseup="onMouseUp"
-    ></canvas>
+    <p>this is my rectangle</p>
+    <canvas ref="canvas" :width="canvasWidth" :height="canvasHeight" @mousedown="onMouseDown" @mousemove="onMouseMove"
+      @mouseup="onMouseUp">
+    </canvas>
+  </div>
+  <div>
+    <button id="chaise-btn" @click="addShape(canvas, 0,0,0,CanevasIconName.Chaise)">ajouter chaise</button>
+    <button id="table-btn" @click="addShape(canvas, 0,0, 0, CanevasIconName.Table)">ajouter
+      table</button>
+    <button id="deco-btn" @click="addShape(canvas, 0,0, 0, CanevasIconName.Déco)">ajouter décoration</button>
+    <button id="deco-btn" @click="addShape(canvas, 0,0, 0, CanevasIconName.PorteManteau)">ajouter porte manteau</button>
+    <button id="rotate-btn" @click="rotate(90)">Rotation 90°</button>
   </div>
 
   <div>
@@ -177,8 +165,7 @@ const rotate = () => {
 
 <style scoped>
 canvas {
-  border: 1px solid black;
-  margin-bottom: 10px;
+  border: 1px solid black
 }
 
 button {
