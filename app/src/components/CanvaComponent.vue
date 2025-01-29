@@ -6,6 +6,7 @@ import Legande from './Legande.vue';
 import { LocalStorageProvider } from '../providers/LocalStorageProvider';
 import type { DataProvider } from '../providers/DataProvider';
 import type { Plan } from '../interface';
+import ListPlan from './ListPlan.vue';
 
 // Références pour canvas et context
 const canvas = ref<HTMLCanvasElement | null>(null);
@@ -128,6 +129,9 @@ const onCreate = () => {
   console.log('Création en cours...');
   // Logique pour initialiser un nouvel état ou ajouter des éléments
 };
+function onSelect(plan:Plan){
+  console.log(plan)
+}
 </script>
 
 <template>
@@ -159,7 +163,7 @@ const onCreate = () => {
     <button @click="onSave">Enregistrer</button>
     <button @click="onCreate">Créer</button>
   </div>
-
+<ListPlan @click="onSelect"></ListPlan>
   
 </template>
 

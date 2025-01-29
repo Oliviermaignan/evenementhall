@@ -19,7 +19,7 @@ export class SaveCanvas extends SavePlan {
 
     // Exemple de sauvegarde dans le localStorage (vous pouvez adapter selon vos besoins)
     const planData = {
-
+      planName,
       shapes: this.shapes,
       canvasWidth: this.canvasWidth,
       canvasHeight: this.canvasHeight
@@ -28,6 +28,6 @@ export class SaveCanvas extends SavePlan {
     // Sauvegarde dans le localStorage
     localStorage.setItem('savedPlan', JSON.stringify(planData));
 
-   
+    console.log(`Plan "${planName}" sauvegardé !`, planData);
   }
 }

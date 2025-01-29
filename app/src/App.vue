@@ -6,6 +6,7 @@ import Button from './components/Button.vue'
 import { RouterView } from 'vue-router';
 import Legande from './components/Legande.vue';
 import CreationNomPlan from './components/CreationNomPlan.vue';
+import ListPlan from './components/ListPlan.vue';
 
 
 function onSave() {
@@ -35,6 +36,7 @@ function onCreate() {}
  <CreationNomPlan></CreationNomPlan>
   <main>
     <RouterView />
+
 
 
   </main>
