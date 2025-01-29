@@ -5,7 +5,8 @@ import Button from './components/Button.vue'
 // Importation des dépendances nécessaires
 import { RouterView } from 'vue-router';
 import Legande from './components/Legande.vue';
-import buttonCompoment from './components/buttonCompoment.vue';
+import CreationNomPlan from './components/CreationNomPlan.vue';
+
 
 function onSave() {
   console.log('save')
@@ -31,7 +32,7 @@ function onCreate() {}
       </div>
     </nav>
   </header>
-  <buttonCompoment></buttonCompoment>
+ <CreationNomPlan></CreationNomPlan>
   <main>
     <RouterView />
 

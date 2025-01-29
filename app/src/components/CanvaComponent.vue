@@ -152,6 +152,17 @@ const rotate = () => {
     <button @click="onSave">Enregistrer</button>
     <button @click="onCreate">Créer</button>
   </div>
+
+  <form id="button-sauvgarde" @submit.prevent="createPlan">
+        <textarea 
+          v-model="planName" 
+          placeholder="Veuillez choisir un nom de Plan" 
+  
+          name="planName"
+        ></textarea>
+        <button id="button-sauvegarde" type="submit">Valider</button>
+      </form>
+      <p v-if="message" style="color: green;">{{ message }}</p>
 </template>
 
 <style scoped>
