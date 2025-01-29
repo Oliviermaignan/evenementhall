@@ -120,7 +120,7 @@ const rotate = (angle) => {
     });
     selectedShape.value.selected = false;
     selectedShape.value = null;
-  }  
+  }
 };
 
 // Fonction pour créer un nouvel état
@@ -128,6 +128,15 @@ const onCreate = () => {
   console.log('Création en cours...');
   // Logique pour initialiser un nouvel état ou ajouter des éléments
 };
+
+onMounted(()=>{
+    if (canvas.value) {
+        context.value = canvas.value.getContext('2d');
+        console.log(shapes);
+  } else {
+    return
+  }
+})
 </script>
 
 <template>
