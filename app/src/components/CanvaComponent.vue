@@ -103,12 +103,25 @@ const rotate = (angle) => {
   }  
 };
 
+const loadCanva = () => {
+  const canvasStorage = localStorage.getItem("canvasData");  
+  if (canvasStorage) {
+    const parsedCanvasData = JSON.parse(canvasStorage);
+    parsedCanvasData.forEach((shape) => {
+      let loadedshape = new Shape(shape.canvas, shape.x, shape.y, shape.angle, shape.icon);
+      shapes.value.push(loadedshape);
+      canvasManager.addShape(loadedshape)
+      drawShapes()
+    })
+  }
+};
+
 
 onMounted(()=>{
     if (canvas.value) {
         context.value = canvas.value.getContext('2d');
-        console.log(shapes);
-        
+        // console.log(shapes);
+        loadCanva();
   } else {
     return
   }
