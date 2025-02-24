@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { CanevasIconName } from './enums.ts';
-import { LocalCanvasStorage } from '../adapters_out/CanvasLocalStorage.ts'
+import { CanvasLocalStorage } from '../adapters_out/CanvasLocalStorage.ts'
 import Shape from './ShapeClass'; 
-import CanvasManager from '../canvasManager.ts';
+import { CanvasStorage } from '../providers/CanvasStorage.ts';
+// import CanvasManager from '../canvasManager.ts';
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 const context = ref<CanvasRenderingContext2D | null>(null);
@@ -13,15 +14,26 @@ const offsetX = ref(0);
 const offsetY = ref(0);
 const canvasWidth = 800;
 const canvasHeight = 600;
-const localCanvasStorage = new LocalCanvasStorage()
-const canvasManager = new CanvasManager(localCanvasStorage)
+// const canvasLocalStorage = new CanvasLocalStorage()
+
+// ici question a poser car je ne comprend pas l'interet de la class abstraite si elle est bypass
+const canvasStorage: CanvasStorage = new CanvasLocalStorage()
+
+// const canvasManager = new CanvasManager(canvasLocalStorage)
 
 const addShape = (canvas: HTMLCanvasElement, x: number, y: number, angle: number, icon: CanevasIconName) => {
   const shape = new Shape(canvas, x, y, angle, icon);
   shapes.value.push(shape);
-  canvasManager.addShape(shape)
+  // canvasManager.addShape(shape)
   drawShapes()
 };
+
+function saveShapesConfig(){
+  if (!shapes){
+    return
+  }
+  canvasStorage.save(shapes)
+}
 
 // Gestion des événements de la souris
 const onMouseDown = (event: MouseEvent) => {
@@ -60,7 +72,7 @@ const onMouseMove = (event: MouseEvent) => {
     selectedShape.value.x = newX;
     selectedShape.value.y = newY;
 
-    canvasManager.updateShapePosition(selectedShape.value.id ,newX, newY)
+    // canvasManager.updateShapePosition(selectedShape.value.id ,newX, newY)
     drawShapes();
   }
 };
@@ -128,6 +140,7 @@ onMounted(()=>{
     <button id="deco-btn" @click="addShape(canvas, 0,0, 0, CanevasIconName.Déco)">ajouter décoration</button>
     <button id="deco-btn" @click="addShape(canvas, 0,0, 0, CanevasIconName.PorteManteau)">ajouter porte manteau</button>
     <button id="rotate-btn" @click="rotate(90)">Rotation 90°</button>
+    <button id="rotate-btn" @click="saveShapesConfig()">sauvegarder espace</button>
   </div>
 
 </template>
