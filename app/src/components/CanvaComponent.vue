@@ -16,11 +16,14 @@ const canvasHeight = 600;
 const localCanvasStorage = new LocalCanvasStorage()
 const canvasManager = new CanvasManager(localCanvasStorage)
 
-const addShape = (canvas: HTMLCanvasElement, x: number, y: number, angle: number, icon: CanevasIconName) => {
+const pushShape = (canvas, x, y, angle, icon) => {
   const shape = new Shape(canvas, x, y, angle, icon);
   shapes.value.push(shape);
   canvasManager.addShape(shape)
   drawShapes()
+}
+const addShape = (canvas: HTMLCanvasElement, x: number, y: number, angle: number, icon: CanevasIconName) => {
+  pushShape(canvas, x, y, angle, icon)
 };
 
 // Gestion des événements de la souris
@@ -108,10 +111,7 @@ const loadCanva = () => {
   if (canvasStorage) {
     const parsedCanvasData = JSON.parse(canvasStorage);
     parsedCanvasData.forEach((shape) => {
-      let loadedshape = new Shape(shape.canvas, shape.x, shape.y, shape.angle, shape.icon);
-      shapes.value.push(loadedshape);
-      canvasManager.addShape(loadedshape)
-      drawShapes()
+      pushShape(shape.canvas, shape.x, shape.y, shape.angle, shape.icon);
     })
   }
 };
