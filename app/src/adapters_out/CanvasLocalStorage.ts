@@ -1,11 +1,12 @@
 import { CanvasStorage } from "../providers/CanvasStorage";
-import { ShapesConfig } from "../providers/CanvasStorage"
+import { ShapesConfig } from "../providers/CanvasStorage";
 
 
 export class CanvasLocalStorage extends CanvasStorage {
+  private storageKey = "canvasData";
 
   save(data: ShapesConfig): void {
-    localStorage.setItem(data.name, data);
+    localStorage.setItem(this.storageKey, data);
   }
 
   load(selectedConfig: number): Config | null {
