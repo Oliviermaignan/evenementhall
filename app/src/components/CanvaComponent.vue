@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { CanevasIconName } from './enums.ts';
-import { LocalCanvasStorage } from '../adapters_out/storage.ts'
+import { LocalCanvasStorage } from '../adapters_out/CanvasLocalStorage.ts'
 import Shape from './ShapeClass'; 
 import CanvasManager from '../canvasManager.ts';
 

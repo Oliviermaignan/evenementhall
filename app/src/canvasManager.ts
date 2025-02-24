@@ -1,4 +1,4 @@
-import { LocalCanvasStorage } from "../src/adapters_out/storage";
+import { LocalCanvasStorage } from "./adapters_out/CanvasLocalStorage";
 import Shape from "./components/ShapeClass";
 
 export default class CanvasManager {
