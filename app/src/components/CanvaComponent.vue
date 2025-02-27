@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, type Ref } from 'vue';
 import { CanevasIconName } from './enums.ts';
 import { CanvasLocalStorage } from '../adapters_out/CanvasLocalStorage.ts'
 import Shape from './ShapeClass'; 
@@ -17,7 +17,7 @@ const canvasHeight = 600;
 const loadedShapeNumber = ref();
 // const canvasLocalStorage = new CanvasLocalStorage()
 
-const storageKey = ref(0);
+const storageKey: Ref<string>= ref("");
 
 const addShape = (icon: CanevasIconName) => {
   const shape = new Shape(canvas, 0, 0, 0, icon);

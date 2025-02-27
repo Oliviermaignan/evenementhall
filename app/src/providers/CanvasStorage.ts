@@ -12,7 +12,7 @@ import Shape from '../components/ShapeClass';
 
 
 export abstract class CanvasStorage {
-    abstract save(storageKey: number, data: Shape[]): void;
+    abstract save(storageKey: string, data: Shape[]): void;
     abstract load(): string | null;
   }
   
