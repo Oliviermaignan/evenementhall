@@ -14,7 +14,6 @@ const offsetX = ref(0);
 const offsetY = ref(0);
 const canvasWidth = 800;
 const canvasHeight = 600;
-const loadedShapeNumber = ref();
 // const canvasLocalStorage = new CanvasLocalStorage()
 
 const storageKey: Ref<string>= ref("");
@@ -123,11 +122,11 @@ const rotate = (angle) => {
   }  
 };
 
-const getThisCanvas = (loadedShapeNumber :number) => {
-  const canvasLocalStorage = new CanvasLocalStorage()
-  const array = canvasLocalStorage.load(loadedShapeNumber)
+const getThisCanvas = (loadedShapeString :string) => {
+  const canvasLocalStorage = new CanvasLocalStorage(loadedShapeString)
+  const array = canvasLocalStorage.load(loadedShapeString)
   console.log(array);
-  array.forEach(loadedShape => {
+  array.forEach((loadedShape) => {
     const shape = new Shape(canvas, loadedShape.x, loadedShape.y, loadedShape.angle, loadedShape.icon);
     shapes.value.push(shape);
     drawShapes()
@@ -171,10 +170,9 @@ onMounted(()=>{
       <button @click="cleanShapesConfig">Vider l'espace</button>
     </div>
     <div class="relative inline-block marginY">
-      <input type="text" minlength="1" v-model="loadedShapeNumber">
-      <button @click="getThisCanvas">
+      <button @click="getThisCanvas(storageKey)">
         Charger le canvas
-      </button>
+     </button>
     </div>
   </div>
 
