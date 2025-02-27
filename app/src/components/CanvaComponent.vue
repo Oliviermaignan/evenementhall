@@ -17,7 +17,7 @@ const canvasHeight = 600;
 const loadedShapeNumber = ref();
 // const canvasLocalStorage = new CanvasLocalStorage()
 
-const storageKey = ref(0);
+const storageKey: Ref<string> = ref("");
 
 const addShape = (icon: CanevasIconName) => {
   const shape = new Shape(canvas, 0, 0, 0, icon);
