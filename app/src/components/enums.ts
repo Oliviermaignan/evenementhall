@@ -3,4 +3,5 @@ export enum CanevasIconName {
     Déco = "Star.svg",
     Chaise = "Ellipse.svg",
     PorteManteau = "Polygon.svg",
+    Default = "Default",
 }

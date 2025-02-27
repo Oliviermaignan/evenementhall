@@ -12,6 +12,7 @@ export default class Shape {
   icon: CanevasIconName;
   image: HTMLImageElement | null = null;
   sideLength: number;
+    value: any;
 
   constructor(
     canvas: HTMLCanvasElement,

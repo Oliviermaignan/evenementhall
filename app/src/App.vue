@@ -7,6 +7,7 @@ import { RouterView } from 'vue-router';
 import Legande from './components/Legande.vue';
 import CreationNomPlan from './components/CreationNomPlan.vue';
 import ListPlan from './components/ListPlan.vue';
+import HistoriqueObject from './components/historiqueObject.vue';
 
 
 function onSave() {
@@ -34,6 +35,7 @@ function onCreate() {}
     </nav>
   </header>
  <CreationNomPlan></CreationNomPlan>
+
   <main>
     <RouterView />
 

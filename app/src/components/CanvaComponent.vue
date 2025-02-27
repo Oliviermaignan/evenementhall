@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref,defineProps, computed, watchEffect, reactive } from 'vue';
 import { CanevasIconName } from './enums.ts';
 import Shape from './ShapeClass'; // Assurez-vous que cette classe existe et gère correctement les formes.
 import Legande from './Legande.vue';
@@ -7,6 +7,7 @@ import { LocalStorageProvider } from '../providers/LocalStorageProvider';
 import type { DataProvider } from '../providers/DataProvider';
 import type { Plan } from '../interface';
 import ListPlan from './ListPlan.vue';
+import HistoriqueObject from './historiqueObject.vue';
 
 // Références pour canvas et context
 const canvas = ref<HTMLCanvasElement | null>(null);
@@ -19,6 +20,12 @@ const selectedShape = ref<Shape | null>(null);
 // Variables pour le drag-and-drop
 const offsetX = ref(0);
 const offsetY = ref(0);
+
+// Variables pour suivre le stock
+const stock = reactive({
+  table: 5,
+  chair: 5,
+});
 
 // Dimensions du canvas
 const canvasWidth = 800;
@@ -39,11 +46,40 @@ const createPlan = () => {
 };
 
 // Ajouter une forme
-const addShape = (canvas: HTMLCanvasElement, x: number, y: number, angle: number, icon: CanevasIconName) => {
-  const shape = new Shape(canvas, x, y, angle, icon);
+const addShape = (itemType: Item, items: { stock: { chaise: number, table: number } }) => {
+  let icon: CanevasIconName = CanevasIconName.Default; // Valeur par défaut pour éviter une erreur
+
+  switch (itemType) {
+    case 'chaise':
+      if (stock.chair > 0) {
+        icon = CanevasIconName.Chaise;
+        stock.chair -= 1;
+        console.log(`Chaise ajoutée. Stock restant: ${stock.chair}`);
+      } else {
+        console.log("Stock de chaises épuisé !");
+      }
+      break;
+
+    case 'table':
+      if (stock.table > 0) {
+        icon = CanevasIconName.Table;
+        stock.table -= 1;
+        console.log(`Table ajoutée. Stock restant: ${stock.table}`);
+      } else {
+        console.log("Stock de tables épuisé !");
+      }
+      break;
+
+    default:
+      console.log("Type d'article inconnu !");
+      return; // Sortie anticipée pour éviter de créer une forme invalide
+  }
+
+  const shape = new Shape(canvas.value, 0, 0, 0, icon);
   shapes.value.push(shape);
   drawShapes();
 };
+
 
 // Gestion des événements de souris pour drag-and-drop
 const onMouseDown = (event: MouseEvent) => {
@@ -121,7 +157,7 @@ const rotate = (angle) => {
     });
     selectedShape.value.selected = false;
     selectedShape.value = null;
-  }  
+  }
 };
 
 // Fonction pour créer un nouvel état
@@ -129,9 +165,24 @@ const onCreate = () => {
   console.log('Création en cours...');
   // Logique pour initialiser un nouvel état ou ajouter des éléments
 };
-function onSelect(plan:Plan){
-  console.log(plan)
-}
+
+onMounted(()=>{
+    if (canvas.value) {
+        context.value = canvas.value.getContext('2d');
+        console.log(shapes);
+  } else {
+    return
+  }
+})
+
+
+// Définition des p
+
+// Initialisation réactive du stock
+
+type Item = 'chaise' | 'table' | 'déco' | 'porteManteau'|'stock'
+
+
 </script>
 
 <template>
@@ -142,12 +193,14 @@ function onSelect(plan:Plan){
     </canvas>
   </div>
   <div>
-    <button id="chaise-btn" @click="addShape(canvas, 0,0,0,CanevasIconName.Chaise)">ajouter chaise</button>
-    <button id="table-btn" @click="addShape(canvas, 0,0, 0, CanevasIconName.Table)">ajouter
+    <button id="chaise-btn" @click="addShape('chaise')">ajouter chaise</button>
+    <button id="table-btn" @click="addShape('table')">ajouter
       table</button>
-    <button id="deco-btn" @click="addShape(canvas, 0,0, 0, CanevasIconName.Déco)">ajouter décoration</button>
-    <button id="deco-btn" @click="addShape(canvas, 0,0, 0, CanevasIconName.PorteManteau)">ajouter porte manteau</button>
+    <button id="deco-btn" @click="addShape('déco')">ajouter décoration</button>
+    <button id="deco-btn" @click="addShape('porteManteau')">ajouter porte manteau</button>
     <button id="rotate-btn" @click="rotate(90)">Rotation 90°</button>
+  <HistoriqueObject :stock="items"></HistoriqueObject>
+
   </div>
 
   <div>
@@ -164,7 +217,14 @@ function onSelect(plan:Plan){
     <button @click="onCreate">Créer</button>
   </div>
 <ListPlan @click="onSelect"></ListPlan>
-  
+   
+<div>
+    <button @click="addShape('chair')">+</button>
+    <span>{{ stock.chair }}</span> chaise(s)
+    <button @click="removeItem('chair')">-</button>
+  </div>
+
+ 
 </template>
 
 <style scoped>
