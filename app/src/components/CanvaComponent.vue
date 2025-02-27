@@ -165,14 +165,13 @@ onMounted(()=>{
     <div class="marginY">
       <input v-model="storageKey" placeholder="Nom de la sauvegarde" />
       <button id="rotate-btn" @click="saveShapesConfig">Sauvegarder espace</button>
+      <button @click="getThisCanvas(storageKey)">Charger le canvas</button>
     </div>
     <div class="marginY">
       <button @click="cleanShapesConfig">Vider l'espace</button>
     </div>
     <div class="relative inline-block marginY">
-      <button @click="getThisCanvas(storageKey)">
-        Charger le canvas
-     </button>
+      
     </div>
   </div>
 
