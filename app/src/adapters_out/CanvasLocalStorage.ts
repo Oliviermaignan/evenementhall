@@ -14,10 +14,10 @@ export class CanvasLocalStorage extends CanvasStorage {
     localStorage.setItem(this.storageKey, JSON.stringify(data));
   }
 
-  load(selectedConfig: number): Config | null {
+  load(selectedConfig: string): Config | null {
     let canvasStorage = localStorage.getItem(selectedConfig);
     const parsedCanvasData = JSON.parse(canvasStorage);
-    return parsedCanvas
+    return parsedCanvasData
   }
 
   list(canvaNumber: number): Config[]{
