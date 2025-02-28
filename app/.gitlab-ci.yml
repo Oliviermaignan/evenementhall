@@ -2,27 +2,24 @@ image: node:18
 
 stages:
   - install
+  - test
   - build
-
+ 
+before_script:
+  - apt-get update && apt-get install -y unzip git zip
+  
 cache:
   key: npm-cache
   paths:
     - node_modules/
 
-before_script:
-  - echo "Affichage du répertoire courant et des fichiers disponibles"
-  - pwd  # Vérifier l’emplacement d’exécution
-  - ls -la  # Voir si package.json est bien là
+
 
 install_dependencies:
   stage: install
   script:
     - npm install
-  artifacts:
-    paths:
-      - node_modules/
-    expire_in: 1 week  # Nettoyage automatique après une semaine
-
+ 
 build_prod:
   stage: build
   dependencies:
