@@ -1,11 +1,20 @@
 image: node:18  # Utilisation de Node.js
 
 stages:
+- install
   - build
+cache:
+  key: npm-cache
+  paths:
+    - node_modules/
 
-variables:
-  DATABASE_URL: "sqlite:///:memory:"
-
+install_dependencies:
+  stage: install
+  script:
+    - npm i
+  artifacts:
+    paths:
+      - node_modules/
 
 before_script:
   - apt-get update && apt-get install 
