@@ -47,7 +47,7 @@ const createPlan = () => {
 
 // Ajouter une forme
 const addShape = (itemType: Item, items: { stock: { chaise: number, table: number } }) => {
-  let icon: CanevasIconName = CanevasIconName.Default; // Valeur par défaut pour éviter une erreur
+  let icon: CanevasIconName ; // Valeur par défaut pour éviter une erreur
 
   switch (itemType) {
     case 'chaise':
@@ -68,17 +68,16 @@ const addShape = (itemType: Item, items: { stock: { chaise: number, table: numbe
       } else {
         console.log("Stock de tables épuisé !");
       }
+   
       break;
-
-    default:
-      console.log("Type d'article inconnu !");
-      return; // Sortie anticipée pour éviter de créer une forme invalide
-  }
-
-  const shape = new Shape(canvas.value, 0, 0, 0, icon);
+    }
+    const shape = new Shape(canvas.value, 0, 0, 0, icon);
   shapes.value.push(shape);
   drawShapes();
-};
+  };
+      
+
+
 
 
 // Gestion des événements de souris pour drag-and-drop
