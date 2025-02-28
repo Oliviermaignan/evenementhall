@@ -7,8 +7,7 @@ import { CanevasIconName } from './enums.ts';
     <body>
         <div class="container">
             <table class="styled-table">
-           
-              
+                <tbody>
                     <tr>
                         <td><img :src="`/icons/${CanevasIconName.PorteManteau}`" alt=""></td>
                         <td>porte manteau</td>
@@ -25,7 +24,7 @@ import { CanevasIconName } from './enums.ts';
                         <td><img :src="`/icons/${CanevasIconName.Déco}`" alt=""></td>
                         <td>decoration</td>
                     </tr>
-             
+                </tbody>
             </table>
         </div>
     </body>
@@ -45,7 +44,7 @@ body {
 
 /* Container for centering content */
 .container {
-    width: 100%;
+    width: 50%;
     padding: 20px;
     max-width: 1200px;
     box-sizing: border-box;

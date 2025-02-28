@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref,defineProps, computed, watchEffect, reactive } from 'vue';
+import { onMounted, reactive, ref, type Ref } from 'vue';
 import { CanevasIconName } from './enums.ts';
-import Shape from './ShapeClass'; // Assurez-vous que cette classe existe et gère correctement les formes.
-import Legande from './Legande.vue';
-import { LocalStorageProvider } from '../providers/LocalStorageProvider';
-import type { DataProvider } from '../providers/DataProvider';
-import type { Plan } from '../interface';
-import ListPlan from './ListPlan.vue';
-import HistoriqueObject from './historiqueObject.vue';
+import { CanvasLocalStorage } from '../adapters_out/CanvasLocalStorage.ts'
+import Shape from './ShapeClass'; 
+import { CanvasStorage } from '../providers/CanvasStorage.ts';
+// import CanvasManager from '../canvasManager.ts';
 
 // Références pour canvas et context
 const canvas = ref<HTMLCanvasElement | null>(null);
@@ -81,6 +78,30 @@ const addShape = (itemType: Item, items: { stock: { chaise: number, table: numbe
 
 
 // Gestion des événements de souris pour drag-and-drop
+// const canvasLocalStorage = new CanvasLocalStorage()
+
+const storageKey: Ref<string>= ref("");
+
+
+
+function saveShapesConfig(){
+  const canvasStorage = new CanvasLocalStorage(storageKey.value);
+  if (!shapes){
+    return
+  }
+  canvasStorage.save(shapes.value)
+  console.log(`Données sauvegardées sous la clé: ${storageKey.value}`);
+}
+
+const cleanShapesConfig = () => {
+  //efface le canva
+  shapes.value = [];
+  if (context.value) {
+    context.value.clearRect(0, 0, canvasWidth, canvasHeight);
+  }
+};
+
+// Gestion des événements de la souris
 const onMouseDown = (event: MouseEvent) => {
   const { offsetX: mouseX, offsetY: mouseY } = event;
   selectedShape.value = shapes.value.find((shape) =>
@@ -117,6 +138,7 @@ const onMouseMove = (event: MouseEvent) => {
     selectedShape.value.x = newX;
     selectedShape.value.y = newY;
 
+    // canvasManager.updateShapePosition(selectedShape.value.id ,newX, newY)
     drawShapes();
   }
 };
@@ -164,11 +186,23 @@ const onCreate = () => {
   console.log('Création en cours...');
   // Logique pour initialiser un nouvel état ou ajouter des éléments
 };
+const getThisCanvas = (loadedShapeString :string) => {
+  const canvasLocalStorage = new CanvasLocalStorage(loadedShapeString)
+  const array = canvasLocalStorage.load(loadedShapeString)
+  console.log(array);
+  array.forEach((loadedShape) => {
+    const shape = new Shape(canvas, loadedShape.x, loadedShape.y, loadedShape.angle, loadedShape.icon);
+    shapes.value.push(shape);
+    drawShapes()
+  });
+}
 
 onMounted(()=>{
     if (canvas.value) {
         context.value = canvas.value.getContext('2d');
         console.log(shapes);
+        // console.log(shapes);
+        
   } else {
     return
   }
@@ -185,11 +219,11 @@ type Item = 'chaise' | 'table' | 'déco' | 'porteManteau'|'stock'
 </script>
 
 <template>
-  <div>
-    <p>this is my rectangle</p>
+  <div class="canva-container">
     <canvas ref="canvas" :width="canvasWidth" :height="canvasHeight" @mousedown="onMouseDown" @mousemove="onMouseMove"
       @mouseup="onMouseUp">
     </canvas>
+
   </div>
   <div>
     <button id="chaise-btn" @click="addShape('chaise')">ajouter chaise</button>
@@ -259,5 +293,22 @@ textarea {
   border: none;
   background-color: #D9D9D9;
   resize: none; /* Désactiver le redimensionnement */
+}
+
+button, input{
+  height: 30px;
+}
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 5px;
+}
+.marginY {
+  margin: 10px 0;
+}
+.canva-container{
+  display:flex;
+  justify-content: center;
 }
 </style>
