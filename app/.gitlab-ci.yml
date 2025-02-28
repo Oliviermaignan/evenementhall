@@ -4,7 +4,7 @@ stages:          # List of stages for jobs, and their order of execution
   - test
 
 test:   # This job runs in the test stage.
-  stage: test    # It only starts when the job in the build stage completes successfully.
+  stage: test    # It only starts when the job in the build stage completes successfully. test
   script:
     - npm i 
     - echo "tout a été installé"
