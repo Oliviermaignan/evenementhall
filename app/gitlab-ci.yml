@@ -17,8 +17,7 @@ unit test:
   script:
     - npm install --progress=false
     - npm run unit
-  only:
-    - main  # Exécution seulement sur la branche main
+
 
 deploy:
   image: alpine
@@ -30,5 +29,4 @@ deploy:
     - chmod 600 ~/.ssh/id_rsa
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
     - rsync -razv --delete dist/ user@server.com:/your/project/path/
-  only:
-    - main  # Exécution seulement sur la branche main
+
