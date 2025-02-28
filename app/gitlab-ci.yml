@@ -1,5 +1,5 @@
 build site:
-  image: node:6
+  image: node:18  # Mise à jour de Node.js
   stage: build
   script:
     - npm install --progress=false
@@ -8,22 +8,27 @@ build site:
     expire_in: 1 week
     paths:
       - components
+  only:
+    - main  # Exécution seulement sur la branche main
 
 unit test:
-  image: node:6
+  image: node:18  # Mise à jour de Node.js
   stage: test
   script:
     - npm install --progress=false
     - npm run unit
-only:
-- main
+  only:
+    - main  # Exécution seulement sur la branche main
+
 deploy:
   image: alpine
   stage: deploy
   script:
     - apk add --no-cache rsync openssh
     - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" >> ~/.ssh/id_dsa
-    - chmod 600 ~/.ssh/id_dsa
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa  # Correction id_rsa au lieu de id_dsa
+    - chmod 600 ~/.ssh/id_rsa
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-    - rsync -rav --delete dist/ user@server.com:/your/project/path/
+    - rsync -razv --delete dist/ user@server.com:/your/project/path/
+  only:
+    - main  # Exécution seulement sur la branche main
