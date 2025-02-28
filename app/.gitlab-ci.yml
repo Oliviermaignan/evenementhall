@@ -3,6 +3,8 @@ image: node:18  # Utilisation de Node.js
 stages:
   - build
 
+variables:
+  DATABASE_URL: "sqlite:///:memory:"
 
 
 before_script:
