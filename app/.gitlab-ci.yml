@@ -1,8 +1,10 @@
-image: node:18  # Utilisation de Node.js
+image: node:18
 
 stages:
-- install
+  - install
+  - test
   - build
+
 cache:
   key: npm-cache
   paths:
@@ -16,19 +18,13 @@ install_dependencies:
     paths:
       - node_modules/
 
-before_script:
-  - apt-get update && apt-get install 
-  - npm install  # Installation des dépendances du projet Node.js
 
-# Job spécifique à la branche de production, créant un artifact (fichier zip)
-build_prod:
+build:
   stage: build
   script:
-    - echo "Création de l'archive pour la branche de production"
-    - zip -r my_project_artifact.zip .  # Crée l'archive de tout le projet
-  only:
-    - newMatthieu  # Ce job ne s'exécute que sur la branche principale
+    - npm run build
   artifacts:
     paths:
-      - my_project_artifact.zip  # Archive conservée en tant qu'artifact
-    expire_in: 1 week  # Durée de vie de l'artifact
+      - dist/
+  only:
+    - main
