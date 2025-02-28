@@ -1,9 +1,12 @@
+ 
 image: node:18
 
 stages:
   - install
-  - test
   - build
+
+before_script:
+  - apt-get update && apt-get install -y unzip git zip
 
 cache:
   key: npm-cache
@@ -14,17 +17,17 @@ install_dependencies:
   stage: install
   script:
     - npm i
-  artifacts:
-    paths:
-      - node_modules/
 
 
-build:
+
+build_prod:
   stage: build
   script:
-    - npm run build
+    - echo "Création de l'archive pour la branche de production"
+    - zip -r my_project_artifact.zip .  # Crée l'archive de tout le répertoire
+  only:
+    - main  # Ce job ne s'exécute que sur la branche 'prod'
   artifacts:
     paths:
-      - dist/
-  only:
-    - main
+      - my_project_artifact.zip  # Spécifie le fichier à garder un artifact
+    expire_in: 1 week  # Optionnel : spécifie la durée de vie de l'artifact
