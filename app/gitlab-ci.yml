@@ -30,8 +30,18 @@ build_prod:
     - echo "Création de l'archive pour la branche de production"
     - zip -r my_project_artifact.zip .  # Crée l'archive de tout le répertoire
   only:
-    - main  # Ce job ne s'exécute que sur la branche 'prod'
+    - newMatthieu # Ce job ne s'exécute que sur la branche 'prod'
   artifacts:
     paths:
       - my_project_artifact.zip  # Spécifie le fichier à garder un artifact
     expire_in: 1 week  # Optionnel : spécifie la durée de vie de l'artifact
+
+# build:
+#   stage: build
+#   script:
+#     - npm run build
+#   artifacts:
+#     paths:
+#       - dist/
+#   only:
+#     - main
