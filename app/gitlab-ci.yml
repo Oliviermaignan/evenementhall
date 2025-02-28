@@ -9,7 +9,7 @@ build site:
     paths:
       - components
   only:
-    - main  # Exécution seulement sur la branche main
+    - newMatthieu  # Exécution seulement sur la branche main
 
 unit test:
   image: node:18  # Mise à jour de Node.js
