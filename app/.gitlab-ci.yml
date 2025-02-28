@@ -1,32 +1,23 @@
-build site:
-  image: node:18  # Mise à jour de Node.js
+image: node:18  # Utilisation de Node.js
+
+stages:
+  - build
+
+
+
+before_script:
+  - apt-get update && apt-get install 
+  - npm install  # Installation des dépendances du projet Node.js
+
+# Job spécifique à la branche de production, créant un artifact (fichier zip)
+build_prod:
   stage: build
   script:
-    - npm install --progress=false
-    - npm run build
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - components
+    - echo "Création de l'archive pour la branche de production"
+    - zip -r my_project_artifact.zip .  # Crée l'archive de tout le projet
   only:
-    - newMatthieu  # Exécution seulement sur la branche main
-
-unit test:
-  image: node:18  # Mise à jour de Node.js
-  stage: test
-  script:
-    - npm install --progress=false
-    - npm run unit
-
-
-deploy:
-  image: alpine
-  stage: deploy
-  script:
-    - apk add --no-cache rsync openssh
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa  # Correction id_rsa au lieu de id_dsa
-    - chmod 600 ~/.ssh/id_rsa
-    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-    - rsync -razv --delete dist/ user@server.com:/your/project/path/
-
+    - main  # Ce job ne s'exécute que sur la branche principale
+  artifacts:
+    paths:
+      - my_project_artifact.zip  # Archive conservée en tant qu'artifact
+    expire_in: 1 week  # Durée de vie de l'artifact
