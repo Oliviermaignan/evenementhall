@@ -1,0 +1,38 @@
+image: node:18
+
+stages:
+  - install
+  - build
+
+cache:
+  key: npm-cache
+  paths:
+    - node_modules/
+
+before_script:
+  - echo "Affichage du répertoire courant et des fichiers disponibles"
+  - pwd  # Vérifier l’emplacement d’exécution
+  - ls -la  # Voir si package.json est bien là
+
+install_dependencies:
+  stage: install
+  script:
+    - npm install
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 week  # Nettoyage automatique après une semaine
+
+build_prod:
+  stage: build
+  dependencies:
+    - install_dependencies  # Utilise node_modules sans réinstaller
+  script:
+    - echo "Création de l'archive pour la branche de production"
+    - zip -r my_project_artifact.zip . 
+  artifacts:
+    paths:
+      - my_project_artifact.zip
+    expire_in: 1 week  # Archive nettoyée après une semaine
+  only:
+    - main  # Exécution uniquement sur la branche principale
